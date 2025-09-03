@@ -40,3 +40,23 @@ Response:
 ## Notes
 - If Redis is down, the API will still return a reply but may add a system warning in messages.
 - To reset state, delete the key `chat:{session_id}:messages` in Redis.
+## State and Summary Persistence
+The API also persists per-session state and summary in Redis:
+
+- Key chat:{session_id}:state holds:
+  {
+    "lang": "en",
+    "stage": "",
+    "last_items": [],
+    "selected_sku": null
+  }
+
+- Key chat:{session_id}:summary holds a plain string (truncated to max 1500 characters).
+
+You can override state and summary by passing them in the POST body:
+{
+  "session_id": "test-123",
+  "message": "Show me latest sneakers",
+  "state": { "lang": "en", "stage": "browsing", "last_items": ["sku123"], "selected_sku": null },
+  "summary": "User is browsing sneakers..."
+}
